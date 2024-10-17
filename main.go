@@ -17,13 +17,13 @@ type Blockchain struct {
 
 type Block struct {
 	Hash     []byte
-	Data     []byte
+	Data     string
 	PrevHash []byte
 }
 
 // derive function combines data and prevhash and joins them then use sha256 hashing algorithm to create the hash of the current block
 func (b *Block) deriveHash() {
-	info := bytes.Join([][]byte{b.Data, b.PrevHash}, []byte{})
+	info := bytes.Join([][]byte{[]byte(b.Data), b.PrevHash}, []byte{})
 	hash := sha256.Sum256(info)
 	b.Hash = hash[:]
 }
@@ -33,7 +33,7 @@ func (b *Block) deriveHash() {
 //second step: apply the derive hash function on this function which adds the current hash to the block
 
 func createBlock(data string, prevhash []byte) *Block {
-	block := &Block{[]byte{}, []byte(data), prevhash}
+	block := &Block{[]byte{}, data, prevhash}
 	block.deriveHash()
 	return block
 }
