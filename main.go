@@ -15,6 +15,7 @@ func main() {
 		fmt.Printf("---------------------BLOCK:%v-------------------------------\n", blockHeight)
 		msg := fmt.Sprintf("block %v added", blockHeight)
 		chain.AddBlock(msg)
+
 		time.Sleep(time.Second * 2)
 		blockHeight++
 	}
