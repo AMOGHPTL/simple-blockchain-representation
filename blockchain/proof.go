@@ -10,16 +10,16 @@ import (
 	"math/big"
 )
 
-//take the data from the block
+// Take the data from the block
 
-//create a counter(nonce) which statrs from 0
+// create a counter (nonce) which starts at 0
 
-//create a hash of the data plus the counter
+// create a hash of the data plus the counter
 
-//check if the hash to see if it meets a set of requirements
+// check the hash to see if it meets a set of requirements
 
-//requirements:
-// The first few bytes must contains 0s
+// Requirements:
+// The First few bytes must contain 0s
 
 const Difficulty = 16
 
@@ -30,9 +30,8 @@ type ProofOfWork struct {
 	Target *big.Int
 }
 
-//NewProof function takes the block and returns the pointer to the pow struct
-//first we set the target by left shifting a big int by 256(totoal bits)-difficulty
-
+// NewProof function takes the block and returns the pointer to the pow struct
+// first we set the target by left shifting a big int by 256(totoal bits)-difficulty
 func NewProof(b *Block) *ProofOfWork {
 	target := big.NewInt(1)
 	target.Lsh(target, uint(256-Difficulty))
@@ -46,7 +45,7 @@ func (pow *ProofOfWork) InitData(nonce int) []byte {
 	data := bytes.Join(
 		[][]byte{
 			pow.Block.PrevHash,
-			[]byte(pow.Block.Data),
+			pow.Block.HashTransactions(),
 			ToHex(int64(nonce)),
 			ToHex(int64(Difficulty)),
 		},
@@ -67,7 +66,6 @@ func (pow *ProofOfWork) Run() (int, []byte) {
 		hash = sha256.Sum256(data)
 
 		fmt.Printf("\r%x", hash)
-
 		intHash.SetBytes(hash[:])
 
 		if intHash.Cmp(pow.Target) == -1 {
@@ -75,8 +73,10 @@ func (pow *ProofOfWork) Run() (int, []byte) {
 		} else {
 			nonce++
 		}
+
 	}
 	fmt.Println()
+
 	return nonce, hash[:]
 }
 
@@ -96,6 +96,8 @@ func ToHex(num int64) []byte {
 	err := binary.Write(buff, binary.BigEndian, num)
 	if err != nil {
 		log.Panic(err)
+
 	}
+
 	return buff.Bytes()
 }
